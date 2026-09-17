@@ -187,3 +187,22 @@ def load_player_data_from_db():
     conn.close()
 
     return df
+    
+def get_player_points_summary(player_df):
+    """Aggregiert Gesamt- und Durchschnittspunkte je Spieler."""
+
+    pts_df = player_df.dropna(subset=["p", "md"]).copy()
+    pts_df = pts_df.drop_duplicates(subset=["player_id", "md"])
+
+    summary = (
+        pts_df.groupby("player_id")
+        .agg(
+            total_points=("p", "sum"),
+            avg_points=("p", "mean"),
+            matches_played=("p", "count"),
+        )
+        .reset_index()
+    )
+    summary["avg_points"] = summary["avg_points"].round(1)
+
+    return summary
