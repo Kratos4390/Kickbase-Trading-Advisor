@@ -82,7 +82,7 @@ create_player_data_table()
 reload_data = check_if_data_reload_needed()
 save_player_data_to_db(token, competition_ids, last_mv_values, last_pfm_values, reload_data)
 player_df = load_player_data_from_db()
-points_summary_df = get_player_points_summary(player_df)
+points_summary_df = get_player_points_summary(player_df, league_start_date)
 print("\nData loaded from database.")
 
 # Preprocess the data and spit the data
