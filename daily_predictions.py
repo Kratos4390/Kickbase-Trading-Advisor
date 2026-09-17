@@ -82,6 +82,7 @@ create_player_data_table()
 reload_data = check_if_data_reload_needed()
 save_player_data_to_db(token, competition_ids, last_mv_values, last_pfm_values, reload_data)
 player_df = load_player_data_from_db()
+points_summary_df = get_player_points_summary(player_df)
 print("\nData loaded from database.")
 
 # Preprocess the data and spit the data
@@ -98,12 +99,12 @@ print(f"\nModel evaluation:\nSigns correct: {signs_percent:.2f}%\nRMSE: {rmse:.2
 live_predictions_df = live_data_predictions(today_df, model, features)
 
 # Join with current available players on the market
-market_recommendations_df = join_current_market(token, league_id, live_predictions_df)
+market_recommendations_df = join_current_market(token, league_id, live_predictions_df, points_summary_df)
 print("\n=== Market Recommendations ===")
 display(market_recommendations_df)
 
 # Join with current players on the team
-squad_recommendations_df = join_current_squad(token, league_id, live_predictions_df)
+squad_recommendations_df = join_current_squad(token, league_id, live_predictions_df, points_summary_df)
 print("\n=== Squad Recommendations ===")
 display(squad_recommendations_df)
 
