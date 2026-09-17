@@ -188,11 +188,15 @@ def load_player_data_from_db():
 
     return df
     
-def get_player_points_summary(player_df):
-    """Aggregiert Gesamt- und Durchschnittspunkte je Spieler."""
+def get_player_points_summary(player_df, season_start_date=None):
+    """Aggregiert Gesamt- und Durchschnittspunkte je Spieler für die aktuelle Saison."""
 
     pts_df = player_df.dropna(subset=["p", "md"]).copy()
     pts_df = pts_df.drop_duplicates(subset=["player_id", "md"])
+
+    if season_start_date is not None:
+        pts_df["md"] = pd.to_datetime(pts_df["md"])
+        pts_df = pts_df[pts_df["md"] >= pd.to_datetime(season_start_date)]
 
     summary = (
         pts_df.groupby("player_id")
