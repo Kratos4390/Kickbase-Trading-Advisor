@@ -55,8 +55,7 @@ def join_current_squad(token, league_id, today_df_results, points_df=None):
     # Rename "mv_x" to "mv" for better understanding
     squad_df = squad_df.rename(columns={"mv_x": "mv"})
 
-    # Keep only relevant columns
-        # Merge in points data
+    # Merge in points data
     if points_df is not None:
         squad_df = squad_df.merge(points_df, on="player_id", how="left")
 
@@ -105,6 +104,10 @@ def join_current_market(token, league_id, today_df_results, points_df=None):
 
     # Rename mv_change_1d to mv_change_yesterday for better understanding
     bid_df = bid_df.rename(columns={"mv_change_1d": "mv_change_yesterday"})
+
+    # Merge in points data
+    if points_df is not None:
+        bid_df = bid_df.merge(points_df, on="player_id", how="left")
 
     # Keep only relevant columns
     bid_df = bid_df[["last_name", "position", "team_name", "mv", "mv_change_yesterday", "predicted_mv_target", "s_11_prob", "hours_to_exp", "expiring_today", "total_points", "avg_points", "matches_played"]]
