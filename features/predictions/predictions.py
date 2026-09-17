@@ -33,7 +33,7 @@ def live_data_predictions(today_df, model, features):
     return today_df_results
 
 
-def join_current_squad(token, league_id, today_df_results):
+def join_current_squad(token, league_id, today_df_results, points_df=None):
     squad_players = get_players_in_squad(token, league_id)
 
     squad_df = pd.DataFrame(squad_players["it"])
@@ -56,13 +56,18 @@ def join_current_squad(token, league_id, today_df_results):
     squad_df = squad_df.rename(columns={"mv_x": "mv"})
 
     # Keep only relevant columns
-    squad_df = squad_df[["last_name", "team_name", "mv", "mv_change_yesterday", "predicted_mv_target", "s_11_prob"]]
+        # Merge in points data
+    if points_df is not None:
+        squad_df = squad_df.merge(points_df, on="player_id", how="left")
+
+    # Keep only relevant columns
+    squad_df = squad_df[["last_name", "team_name", "mv", "mv_change_yesterday", "predicted_mv_target", "s_11_prob", "total_points", "avg_points", "matches_played"]]
 
     return squad_df 
 
 
 # TODO Add fail-safe check before player expires if the prob (starting 11) is still high, so no injuries or anything. if it dropped. dont bid / reccommend
-def join_current_market(token, league_id, today_df_results):
+def join_current_market(token, league_id, today_df_results, points_df=None):
     """Join the live predictions with the current market data to get bid recommendations"""
 
     players_on_market = get_league_players_on_market(token, league_id)
