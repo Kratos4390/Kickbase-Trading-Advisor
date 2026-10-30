@@ -157,7 +157,7 @@ def save_player_data_to_db(token, competition_ids, last_mv_values, last_pfm_valu
                 return merged_df
 
             # Use ThreadPoolExecutor to parallelize player fetching
-            with concurrent.futures.ThreadPoolExecutor(max_workers=12) as executor:
+            with concurrent.futures.ThreadPoolExecutor(max_workers=4) as executor:
                 comp_dfs = list(executor.map(process_player, players))
             
             comp_final_df = pd.concat(
@@ -187,9 +187,10 @@ def load_player_data_from_db():
     conn.close()
 
     return df
-    
+
+
 def get_player_points_summary(player_df, season_start_date=None):
-    """Aggregiert Gesamt- und Durchschnittspunkte je Spieler für die aktuelle Saison."""
+    """Aggregiert Gesamt- und Durchschnittspunkte je Spieler fuer die aktuelle Saison."""
 
     pts_df = player_df.dropna(subset=["p", "md"]).copy()
     pts_df = pts_df.drop_duplicates(subset=["player_id", "md"])
